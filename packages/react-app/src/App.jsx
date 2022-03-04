@@ -168,6 +168,15 @@ function App(props) {
 
   // keep track of a variable from the contract in the local React state:
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const isActive = useContractReader(readContracts,"YourContract", "isActive")
+  const threshold = useContractReader(readContracts,"YourContract", "threshold")
+  const timeLeft = useContractReader(readContracts,"YourContract", "timeLeft")
+
+  const depositEvents = useEventListener(readContracts, "YourContract", "Deposit", localProvider, 1);
+  console.log("Deposit events:",depositEvents)
+
+  const withdrawEvents = useEventListener(readContracts, "YourContract", "Withdraw", localProvider, 1);
+  console.log("Withdraw events:",withdrawEvents)
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
