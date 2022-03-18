@@ -150,6 +150,7 @@ function App(props) {
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
+  
 
   // EXTERNAL CONTRACT EXAMPLE:
   //
@@ -167,7 +168,10 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+
+  const actionEvents = useEventListener(readContracts, "YourContract", "Action", localProvider, 1);
+
+  const totalPrice = useContractReader(readContracts,"YourContract", "price")
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -319,6 +323,8 @@ function App(props) {
             writeContracts={writeContracts}
             readContracts={readContracts}
             purpose={purpose}
+            actionEvents={actionEvents}
+            totalPrice={totalPrice}
           />
         </Route>
         <Route path="/mainnetdai">

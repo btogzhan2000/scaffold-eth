@@ -54,6 +54,8 @@ contract YourContract is ERC721,ERC721Enumerable, ERC721URIStorage, Ownable {
 
     uint256 id = uriToTokenId[uriHash];
 
+    emit Action(msg.sender, id, "sell item");
+
     return id;
   }
 
@@ -64,6 +66,8 @@ contract YourContract is ERC721,ERC721Enumerable, ERC721URIStorage, Ownable {
     forSecondarySale[uriHash]=false;
 
     uint256 id = uriToTokenId[uriHash];
+
+    emit Action(msg.sender, id, "cancel sell item");
 
     return id;
   }
@@ -82,6 +86,8 @@ contract YourContract is ERC721,ERC721Enumerable, ERC721URIStorage, Ownable {
 
     return id;
   }
+  
+  event Action(address sender, uint256 tokenId, string action);
 
 // required default override functions (not my own code)
   function _beforeTokenTransfer(

@@ -26,6 +26,27 @@ export default function ExampleUI({
       <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
         <h2>Example UI:</h2>
         <h4>purpose: {purpose}</h4>
+
+        <h1>Price {totalPrice && formatEther(totalPrice)} Ξ</h1>
+        
+        <List
+          bordered
+          dataSource={actionEvents}
+          renderItem={(item) => {
+            return (
+              <List.Item key={item[0]+"_"+item[1]+"_"+item.blockNumber}>
+                <span style={{fontSize:16, marginRight:8}}>#{item[1].toNumber()}</span>
+                <Address
+                    address={item[0]}
+                    ensProvider={mainnetProvider}
+                    fontSize={16}
+                /> =>
+                {item[2]}
+              </List.Item>
+            )
+          }}
+        />
+
         <Divider />
         <div style={{ margin: 8 }}>
           <Input
