@@ -545,12 +545,14 @@ function App(props) {
       for (const a in assets) {
         try {
           const forSale = await readContracts.YourCollectible.forSale(ethers.utils.id(a));
+          const forSecondarySale = await readContracts.YourCollectible.forSecondarySale(utils.id(a))
+
           let owner;
           if (!forSale) {
             const tokenId = await readContracts.YourCollectible.uriToTokenId(ethers.utils.id(a));
             owner = await readContracts.YourCollectible.ownerOf(tokenId);
           }
-          assetUpdate.push({ id: a, ...assets[a], forSale, owner });
+          assetUpdate.push({id:a,...assets[a],forSale:forSale,forSecondarySale:forSecondarySale,owner:owner})
         } catch (e) {
           console.log(e);
         }
@@ -558,7 +560,7 @@ function App(props) {
       setLoadedAssets(assetUpdate);
     };
     if (readContracts && readContracts.YourCollectible) updateYourCollectibles();
-  }, [assets, readContracts, transferEvents]);
+  }, [assets, readContracts, transferEvents, actionEvents]);
 
   const galleryList = [];
   for (const a in loadedAssets) {
@@ -571,7 +573,7 @@ function App(props) {
           <Button
             onClick={() => {
               console.log("gasPrice,", gasPrice);
-              tx(writeContracts.YourCollectible.mintItem(loadedAssets[a].id, { gasPrice }));
+              tx(writeContracts.YourCollectible.mintItem(loadedAssets[a].id, { totalPrice }));
             }}
           >
             Mint
@@ -590,6 +592,39 @@ function App(props) {
           />
         </div>,
       );
+
+      if (loadedAssets[a].owner == address && loadedAssets[a].forSecondarySale) {
+        cardActions.push(
+          <Button onClick={()=>{
+            tx( writeContracts.YourCollectible.cancelSellItem(loadedAssets[a].id,{ gasPrice }) )
+          }}>
+            cancel sell item
+          </Button>
+        )
+      }
+      else if (loadedAssets[a].owner == address && !loadedAssets[a].forSecondarySale) {
+        cardActions.push(
+          <Button onClick={()=>{
+            tx( writeContracts.YourCollectible.sellItem(loadedAssets[a].id,{ gasPrice }) )
+          }}>
+            sell item
+          </Button>
+        )
+      }
+      else if (loadedAssets[a].forSecondarySale) {
+        cardActions.push(
+          <Button onClick={()=>{
+            tx( writeContracts.YourCollectible.buyItem(loadedAssets[a].id,{ totalPrice }) )
+          }}>
+            buy item
+          </Button>
+        )
+      }
+      else {
+        cardActions.push(
+          <div>item is not sold</div>
+        )
+      }
     }
 
     galleryList.push(
